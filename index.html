@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>github</title>
+</head>
+<body>
+  <h1>ISSUES</h1>
+
+  <div id = 'divResult'>
+
+  </div>
+
+  <h1>COMMENTS</h1>
+  <div id = 'divComment'>
+
+  </div>
+  <button onclick="playSound('new_issue');">Play</button>
+  <div id="sound"></div>
+  <script>
+  async function playSound(filename){
+    var mp3Source = '<source src="' + filename + '.mp3" type="audio/mpeg">';
+    var oggSource = '<source src="' + filename + '.ogg" type="audio/ogg">';
+    var embedSource = '<embed hidden="true" autostart="true" loop="false" src="' + filename +'.mp3">';
+    document.getElementById("sound").innerHTML='<audio autoplay="autoplay">' + mp3Source + oggSource + embedSource + '</audio>';
+  }
+  const divResult = document.getElementById("divResult")
+  const divComment = document.getElementById("divComment")
+  window.currentIssues;
+  window.currentComments;
+  getIssues();
+  // getComments();
+
+  setInterval(getIssues, 12000);
+  // setInterval(getComments, 12000);
+
+
+
+  async function getIssues() {
+      console.log("Peo");
+
+      const url = "https://api.github.com/search/issues?q=repo:IIC2233/syllabus type:issue is:issue is:open no:assignee -label:resuelto created:>=" + two_days_ago() + "  -label:\"resuelto por estudiante\""
+      const response = await fetch(url)
+      const result = await response.json()
+      if (window.currentIssues == undefined) {
+        console.log("actualizando");
+        window.currentIssues = result;
+      }else {
+        if (window.currentIssues.items.length == result.items.length) {
+          return
+        }else if (window.currentIssues.items.length < result.items.length) {
+          playSound('new_issue');
+          window.currentIssues = result;
+        }else if (window.currentIssues.items.length > result.items.length) {
+          playSound('lost_issue');
+          window.currentIssues = result;
+        }
+      }
+      clear();
+      if (result.items.length ) {
+        // playSound('new_issue');
+        result.items.forEach(i=>{
+            const anchor = document.createElement("a")
+            anchor.href = i.html_url;
+            anchor.textContent = i.title;
+            divResult.appendChild(anchor)
+            divResult.appendChild(document.createElement("br"))
+        })
+      }else {
+        const notif = document.createElement("p")
+        notif.textContent = "No hay nuevas issues"
+        divResult.appendChild(notif)
+      }
+
+
+  }
+
+  // async function getComments() {
+  //     console.log("COMMENTS");
+  //
+  //     const url = "https://api.github.com/search/issues?q=repo:IIC2233/syllabus type:issue is:issue is:open no:assignee -label:resuelto created:>=" + two_days_ago() + "  -label:\"resuelto por estudiante\""
+  //     const response = await fetch(url)
+  //     const result = await response.json()
+  //     if (window.currentComments == undefined) {
+  //       console.log("actualizando");
+  //       window.currentComments = result;
+  //     }else {
+  //       if (window.currentComments.items.length == result.items.length) {
+  //         return
+  //       }else if (window.currentComments.items.length < result.items.length) {
+  //         playSound('new_comment');
+  //         window.currentComments = result;
+  //       }else if (window.currentComments.items.length > result.items.length) {
+  //         // playSound('lost_issue');
+  //         window.currentComments = result;
+  //       }
+  //     }
+  //     clear();
+  //     if (result.items.length ) {
+  //       playSound('new_comment');
+  //       result.items.forEach(i=>{
+  //           const anchor = document.createElement("a")
+  //           anchor.href = i.html_url;
+  //           anchor.textContent = i.title;
+  //           divResult.appendChild(anchor)
+  //           divResult.appendChild(document.createElement("br"))
+  //       })
+  //     }else {
+  //       const notif = document.createElement("p")
+  //       notif.textContent = "No hay nuevos comentarios"
+  //       divResult.appendChild(notif)
+  //     }
+  //
+  //
+  // }
+
+
+
+  function clear(){
+      while(divResult.firstChild)
+          divResult.removeChild(divResult.firstChild)
+  }
+
+  function clearComments(){
+      while(divComment.firstChild)
+          divComment.removeChild(divComment.firstChild)
+  }
+
+  function two_days_ago() {
+    var date = new Date();
+
+    date ; //# => Fri Apr 01 2011 11:14:50 GMT+0200 (CEST)
+
+    date.setDate(date.getDate() - 2);
+
+    date ;
+
+    month = '' + (date.getMonth() + 1),
+    day = '' + date.getDate(),
+    year = date.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+} //# => Thu Mar 31 2011 11:14:50 GMT+0200 (CEST)
+
+
+  </script>
+</body>
+</html>
