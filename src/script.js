@@ -1,4 +1,4 @@
-USERNAME = "tu_username";
+USERNAME = "";
 
 async function playSound(filename){
   var mp3Source = '<source src="./media/' + filename + '.mp3" type="audio/mpeg">';
@@ -63,7 +63,7 @@ async function getComments() {
     const url1 = "https://api.github.com/search/issues?q=repo:IIC2233/syllabus type:issue is:issue is:open assignee:" + USERNAME
     const response1 = await fetch(url1)
     const my_issues = await response1.json()
-    const url2 = "https://api.github.com/repos/IIC2233/syllabus/issues/comments"
+    const url2 = "https://api.github.com/repos/IIC2233/syllabus/issues/comments?sort=created&direction=desc"
     const response2 = await fetch(url2)
     const all_comments = await response2.json()
     if (!my_issues.items || !all_comments) {
